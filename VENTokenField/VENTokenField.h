@@ -73,6 +73,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (strong, nonatomic) UIColor *toLabelTextColor;
 @property (strong, nonatomic, nullable) NSString *toLabelText;
 @property (strong, nonatomic) UIColor *inputTextFieldTextColor;
+@property (assign, nonatomic, nullable) UIFont *font;
 
 @property (strong, nonatomic) UILabel *toLabel;
 

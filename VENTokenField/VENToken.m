@@ -74,6 +74,19 @@
     [self setHighlighted:_highlighted];
 }
 
+-(void)setFont:(UIFont *)font
+{
+    _font = font;
+    self.titleLabel.font = font;
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    
+    CGRect titleFrame = self.titleLabel.frame;
+    titleFrame.origin.y = (CGRectGetHeight(self.bounds) - CGRectGetHeight(self.titleLabel.frame)) / 2;
+    self.titleLabel.frame = titleFrame;
+}
 
 #pragma mark - Private
 

@@ -39,6 +39,22 @@
     [self.tokenField resignFirstResponder];
 }
 
+- (IBAction)didTapSwitchFontButton:(id)sender
+{
+    NSArray *fonts = @[
+        [UIFont fontWithName:@"Avenir-Book" size:17.0],
+        [UIFont fontWithName:@"HelveticaNeue" size:15.5]
+    ];
+    
+    NSUInteger nextFontIndex = 0;
+    if (self.tokenField.font != nil) {
+        NSUInteger currentIndex = [fonts indexOfObject:self.tokenField.font];
+        if (currentIndex != NSNotFound) {
+            nextFontIndex = currentIndex < (fonts.count - 1) ? currentIndex + 1 : 0;
+        }
+    }
+    self.tokenField.font = fonts[nextFontIndex];
+}
 
 #pragma mark - VENTokenFieldDelegate
 

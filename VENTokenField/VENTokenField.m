@@ -95,10 +95,11 @@ static const CGFloat VENTokenFieldDefaultMaxHeight          = 150.0;
     self.colorScheme = [UIColor blueColor];
     self.toLabelTextColor = [UIColor colorWithRed:112/255.0f green:124/255.0f blue:124/255.0f alpha:1.0f];
     self.inputTextFieldTextColor = [UIColor colorWithRed:38/255.0f green:39/255.0f blue:41/255.0f alpha:1.0f];
+    self.font = [UIFont fontWithName:@"HelveticaNeue" size:15.5];
     
     // Accessing bare value to avoid kicking off a premature layout run.
     _toLabelText = NSLocalizedString(@"To:", nil);
-
+    
     self.originalHeight = CGRectGetHeight(self.frame);
 
     // Add invisible text field to handle backspace when we don't have a real first responder.
@@ -166,6 +167,12 @@ static const CGFloat VENTokenFieldDefaultMaxHeight          = 150.0;
 - (NSString *)inputText
 {
     return self.inputTextField.text;
+}
+
+- (void)setFont:(UIFont *)font {
+    _font = font;
+    self.inputTextField.font = font;
+    [self setNeedsLayout];
 }
 
 
@@ -269,7 +276,7 @@ static const CGFloat VENTokenFieldDefaultMaxHeight          = 150.0;
 - (void)layoutCollapsedLabelWithCurrentX:(CGFloat *)currentX
 {
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(*currentX, CGRectGetMinY(self.toLabel.frame), self.width - *currentX - self.horizontalInset, self.toLabel.height)];
-    label.font = [UIFont fontWithName:@"HelveticaNeue" size:15.5];
+    label.font = self.font;
     label.text = [self collapsedText];
     label.textColor = self.colorScheme;
     label.minimumScaleFactor = 5./label.font.pointSize;
@@ -288,6 +295,7 @@ static const CGFloat VENTokenFieldDefaultMaxHeight          = 150.0;
     
     [self.toLabel sizeToFit];
     newFrame.size.width = CGRectGetWidth(self.toLabel.frame);
+    newFrame.size.height = [self heightForToken];
     
     self.toLabel.frame = newFrame;
     
@@ -299,7 +307,11 @@ static const CGFloat VENTokenFieldDefaultMaxHeight          = 150.0;
 {
     for (NSUInteger i = 0; i < [self numberOfTokens]; i++) {
         NSString *title = [self titleForTokenAtIndex:i];
+        
+        CGRect tokenFrame = CGRectMake(0, 0, 0, [self heightForToken]);
         VENToken *token = [[VENToken alloc] init];
+        token.frame = tokenFrame;
+        token.font = self.font;
 
         __weak VENToken *weakToken = token;
         __weak VENTokenField *weakSelf = self;
@@ -333,7 +345,8 @@ static const CGFloat VENTokenFieldDefaultMaxHeight          = 150.0;
 
 - (CGFloat)heightForToken
 {
-    return 30;
+    CGFloat lineHeight = self.font ? self.font.lineHeight : 15;
+    return MAX(lineHeight + 4, 30);
 }
 
 - (void)layoutInvisibleTextField
@@ -362,7 +375,7 @@ static const CGFloat VENTokenFieldDefaultMaxHeight          = 150.0;
     if (!_toLabel) {
         _toLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         _toLabel.textColor = self.toLabelTextColor;
-        _toLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:15.5];
+        _toLabel.font = self.font;
         _toLabel.x = 0;
         [_toLabel sizeToFit];
         [_toLabel setHeight:[self heightForToken]];
@@ -404,7 +417,7 @@ static const CGFloat VENTokenFieldDefaultMaxHeight          = 150.0;
         _inputTextField = [[VENBackspaceTextField alloc] init];
         [_inputTextField setKeyboardType:self.inputTextFieldKeyboardType];
         _inputTextField.textColor = self.inputTextFieldTextColor;
-        _inputTextField.font = [UIFont fontWithName:@"HelveticaNeue" size:15.5];
+        _inputTextField.font = self.font;
         _inputTextField.autocorrectionType = self.autocorrectionType;
         _inputTextField.autocapitalizationType = self.autocapitalizationType;
         _inputTextField.tintColor = self.colorScheme;
